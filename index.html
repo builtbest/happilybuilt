@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grow Your Bottom Line in 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 640px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .teaser {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      color: #444444;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    label {
+      position: absolute;
+      left: -9999px; /* keep accessible but hidden visually */
+    }
+
+    input[type="email"] {
+      padding: 0.9rem 1rem;
+      min-width: min(260px, 100%);
+      border-radius: 999px;
+      border: 1px solid #cccccc;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input[type="email"]:focus {
+      border-color: #111111;
+    }
+
+    button {
+      padding: 0.9rem 1.6rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #111111;
+      color: #ffffff;
+      white-space: nowrap;
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out,
+        background 0.12s ease-out;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+      background: #000000;
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 480px) {
+      .wrap {
+        padding: 1.5rem;
+      }
+      form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Grow your bottom line in 2026.</h1>
+    <p class="teaser">A smarter way to scale organic and paid search is on the way.</p>
+
+    <!-- Front-end form (wired to Netlify Function or Make webhook) -->
+    <form id="signup-form">
+      <label for="email">Email address</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="you@example.com"
+        required
+      />
+      <button type="submit">Be First to Know</button>
+    </form>
+    <p class="note" id="status"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById("signup-form");
+    const statusEl = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusEl.textContent = "Submitting...";
+
+      const email = document.getElementById("email").value;
+
+      try {
+        const res = await fetch("/.netlify/functions/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            userAgent: navigator.userAgent
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          statusEl.textContent = "You're on the list.";
+          form.reset();
+        } else {
+          statusEl.textContent = data.message || "Something went wrong. Please try again.";
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Error. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
